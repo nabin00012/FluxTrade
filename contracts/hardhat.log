@@ -225,3 +225,155 @@ Any funds sent to them on Mainnet or any other live network WILL BE LOST.
   Block #7:            0x158541a3155e739e16b1ebd97dc051cd36e0669a5c5dc5dfdb591aff2eee901a
 
 [32meth_getTransactionByHash[0m
+[32meth_accounts[0m
+[32mhardhat_metadata[0m
+[32mhardhat_metadata (2)[0m
+[32mhardhat_metadata (3)[0m
+[32mhardhat_metadata (4)[0m
+[32mhardhat_metadata (5)[0m
+[32mhardhat_metadata (6)[0m
+[32mhardhat_metadata (7)[0m
+[32mhardhat_metadata (8)[0m
+[32mhardhat_metadata (9)[0m
+[32mhardhat_metadata (10)[0m
+[32mhardhat_metadata (11)[0m
+[32mhardhat_metadata (12)[0m
+[32mhardhat_metadata (13)[0m
+[32mhardhat_metadata (14)[0m
+[32mhardhat_metadata (15)[0m
+[32mhardhat_metadata (16)[0m
+[32mhardhat_metadata (17)[0m
+[32mhardhat_metadata (18)[0m
+[32mhardhat_metadata (19)[0m
+[32mhardhat_metadata (20)[0m
+[32meth_accounts[0m
+[32mhardhat_metadata[0m
+[32mhardhat_metadata (2)[0m
+[32mhardhat_metadata (3)[0m
+[32mhardhat_metadata (4)[0m
+[32mhardhat_metadata (5)[0m
+[32mhardhat_metadata (6)[0m
+[32mhardhat_metadata (7)[0m
+[32mhardhat_metadata (8)[0m
+[32mhardhat_metadata (9)[0m
+[32mhardhat_metadata (10)[0m
+[32mhardhat_metadata (11)[0m
+[32mhardhat_metadata (12)[0m
+[32mhardhat_metadata (13)[0m
+[32mhardhat_metadata (14)[0m
+[32mhardhat_metadata (15)[0m
+[32mhardhat_metadata (16)[0m
+[32mhardhat_metadata (17)[0m
+[32mhardhat_metadata (18)[0m
+[32mhardhat_metadata (19)[0m
+[32mhardhat_metadata (20)[0m
+[32meth_blockNumber[0m
+[32meth_getBlockByNumber[0m
+[32meth_feeHistory[0m
+[32meth_sendTransaction[0m
+  Contract deployment: FluxTradeExchange
+  Contract address:    0xa513e6e4b8f2a923d98304ec87f64353c4d5c853
+  Transaction:         0xf808a75ebebaa67c4992214ae6d61f1676ddefa2ff08315fc7a15e6445ec2392
+  From:                0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266
+  Value:               0 ETH
+  Gas used:            820313 of 30000000
+  Block #8:            0x0f7a71e95eadc43b47acf94ab8ebd6d9a2ee5b3870439151a14f3d1ea2f894dc
+
+[32meth_getTransactionByHash[0m
+[32meth_getTransactionReceipt[0m
+[32meth_accounts[0m
+[32mhardhat_metadata[0m
+[32mhardhat_metadata (2)[0m
+[32mhardhat_metadata (3)[0m
+[32mhardhat_metadata (4)[0m
+[32mhardhat_metadata (5)[0m
+[32mhardhat_metadata (6)[0m
+[32mhardhat_metadata (7)[0m
+[32mhardhat_metadata (8)[0m
+[32mhardhat_metadata (9)[0m
+[32mhardhat_metadata (10)[0m
+[32mhardhat_metadata (11)[0m
+[32mhardhat_metadata (12)[0m
+[32mhardhat_metadata (13)[0m
+[32mhardhat_metadata (14)[0m
+[32mhardhat_metadata (15)[0m
+[32mhardhat_metadata (16)[0m
+[32mhardhat_metadata (17)[0m
+[32mhardhat_metadata (18)[0m
+[32mhardhat_metadata (19)[0m
+[32mhardhat_metadata (20)[0m
+[32meth_blockNumber[0m
+[32meth_feeHistory[0m
+[32meth_sendTransaction[0m
+  Contract deployment: MockERC20
+  Contract address:    0x2279b7a0a67db372996a5fab50d91eaa73d2ebe6
+  Transaction:         0x9f72c85b4c65abdbd0ab4d17d83025843f7102b420def1d11a9aa24578a633cf
+  From:                0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266
+  Value:               0 ETH
+  Gas used:            747848 of 30000000
+  Block #9:            0x9f9f19f4414a494b5ef62cb4828c1bd0639703be1c859fa7ccec067fdc9a8ff4
+
+[32meth_getTransactionByHash[0m
+[32meth_getTransactionReceipt[0m
+[32meth_blockNumber[0m
+[32meth_feeHistory[0m
+[32meth_sendTransaction[0m
+  Contract deployment: MockERC20
+  Contract address:    0x8a791620dd6260079bf849dc5567adc3f2fdc318
+  Transaction:         0x27861a926d073200d9e7a911e4d8090e6bb0ca33975815126451f82977a4732d
+  From:                0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266
+  Value:               0 ETH
+  Gas used:            747908 of 30000000
+  Block #10:           0xc7264613fb586e9e269d1e5f909d895e146a9e05849302c2ad211d4c23d98fc3
+
+[32meth_getTransactionByHash[0m
+[32meth_getTransactionReceipt[0m
+[32meth_blockNumber[0m
+[32meth_feeHistory[0m
+[32meth_sendTransaction[0m
+  Contract deployment: MockERC20
+  Contract address:    0x610178da211fef7d417bc0e6fed39f05609ad788
+  Transaction:         0x5470e9011545bbd252e885c4184adab993c86edc929c248c4fdb218d03f55287
+  From:                0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266
+  Value:               0 ETH
+  Gas used:            747932 of 30000000
+  Block #11:           0xef695c176509c5ab0e8bfa0f16b33d81c993157d8272ffcadf7128ac6105f82a
+
+[32meth_getTransactionByHash[0m
+[32meth_getTransactionReceipt[0m
+[32meth_blockNumber[0m
+[32meth_feeHistory[0m
+[32meth_sendTransaction[0m
+  Contract call:       MockERC20#mint
+  Transaction:         0x6b3ea4b918a8db38e2f6c97ac5d97f732c09b94961cd53b4bd322078ccc746df
+  From:                0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266
+  To:                  0x2279b7a0a67db372996a5fab50d91eaa73d2ebe6
+  Value:               0 ETH
+  Gas used:            70628 of 30000000
+  Block #12:           0x11d7141938675f3675950fe18a9c93f4ecb4aba7193d8c4a2116695c7e9244ee
+
+[32meth_getTransactionByHash[0m
+[32meth_blockNumber[0m
+[32meth_feeHistory[0m
+[32meth_sendTransaction[0m
+  Contract call:       MockERC20#mint
+  Transaction:         0x91a6d14b3058677afbb6b42fc575e1a27e1194b5088cca1a659781bc371accf5
+  From:                0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266
+  To:                  0x8a791620dd6260079bf849dc5567adc3f2fdc318
+  Value:               0 ETH
+  Gas used:            70664 of 30000000
+  Block #13:           0xe13c7681b0d2d566970ed1e0e4df045639d8c2e687b06aad48240a1c05b10858
+
+[32meth_getTransactionByHash[0m
+[32meth_blockNumber[0m
+[32meth_feeHistory[0m
+[32meth_sendTransaction[0m
+  Contract call:       MockERC20#mint
+  Transaction:         0xff5358efd3c248f93843a65033e83a4f246784f63e70cc2073ec2688f3c527a7
+  From:                0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266
+  To:                  0x610178da211fef7d417bc0e6fed39f05609ad788
+  Value:               0 ETH
+  Gas used:            70628 of 30000000
+  Block #14:           0x5fe5bb18d8231453b6d8b8771db26d627d731e1bcde06f946586332ae7a288fc
+
+[32meth_getTransactionByHash[0m

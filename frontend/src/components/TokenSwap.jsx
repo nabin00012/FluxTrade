@@ -1,23 +1,52 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { FaExchangeAlt, FaChevronDown, FaInfoCircle, FaGasPump, FaClock } from 'react-icons/fa';
 import { useWallet } from '../context/WalletContext';
+import { ethers } from 'ethers';
+import deployments from '../contracts/deployments.json';
+import exchangeABI from '../contracts/abis/FluxTradeExchange.json';
+import tokenABI from '../contracts/abis/ERC20.json';
 
 const TokenSwap = () => {
-  const { account } = useWallet();
+  const { account, signer, provider } = useWallet();
   const [fromToken, setFromToken] = useState('ETH');
   const [toToken, setToToken] = useState('USDC');
   const [fromAmount, setFromAmount] = useState('');
   const [toAmount, setToAmount] = useState('');
   const [slippage, setSlippage] = useState('0.5');
   const [isLoading, setIsLoading] = useState(false);
+  const [exchangeContract, setExchangeContract] = useState(null);
+  const [tokenContracts, setTokenContracts] = useState({});
 
-  // Professional token list with more details
+  // Initialize contracts when wallet is connected
+  useEffect(() => {
+    if (signer && provider) {
+      initializeContracts();
+    }
+  }, [signer, provider]);
+
+  const initializeContracts = async () => {
+    try {
+      // Initialize exchange contract
+      const exchange = new ethers.Contract(deployments.exchangeAddress, exchangeABI, signer);
+      setExchangeContract(exchange);
+
+      // Initialize token contracts
+      const tokens = {};
+      for (const [symbol, address] of Object.entries(deployments.tokens)) {
+        tokens[symbol] = new ethers.Contract(address, tokenABI, signer);
+      }
+      setTokenContracts(tokens);
+    } catch (error) {
+      console.error('Error initializing contracts:', error);
+    }
+  };
+
+    // Professional token list with contract addresses
   const tokens = [
-    { symbol: 'ETH', name: 'Ethereum', balance: '2.45', price: '$1,850.00', icon: 'Ξ' },
-    { symbol: 'USDC', name: 'USD Coin', balance: '1,250.00', price: '$1.00', icon: '💲' },
-    { symbol: 'DAI', name: 'Dai', balance: '500.00', price: '$1.00', icon: '🪙' },
-    { symbol: 'WBTC', name: 'Wrapped Bitcoin', balance: '0.025', price: '$43,250.00', icon: '₿' },
-    { symbol: 'USDT', name: 'Tether', balance: '750.00', price: '$1.00', icon: '₮' },
+    { symbol: 'ETH', name: 'Ethereum', balance: '2.45', price: '$1,850.00', icon: 'Ξ', address: '0x0000000000000000000000000000000000000000' },
+    { symbol: 'USDC', name: 'USD Coin', balance: '1,250.00', price: '$1.00', icon: '💲', address: deployments.tokens?.USDC || '' },
+    { symbol: 'DAI', name: 'Dai', balance: '500.00', price: '$1.00', icon: '🪙', address: deployments.tokens?.DAI || '' },
+    { symbol: 'WBTC', name: 'Wrapped Bitcoin', balance: '0.025', price: '$43,250.00', icon: '₿', address: deployments.tokens?.WBTC || '' },
   ];
 
   const selectedFromToken = tokens.find(t => t.symbol === fromToken);
@@ -27,7 +56,7 @@ const TokenSwap = () => {
   const exchangeRate = fromToken === 'ETH' && toToken === 'USDC' ? '1,850.00' : '1.00';
 
   const handleSwap = async () => {
-    if (!account) {
+    if (!account || !exchangeContract) {
       alert('Please connect your wallet first!');
       return;
     }
@@ -37,11 +66,60 @@ const TokenSwap = () => {
     }
 
     setIsLoading(true);
-    // Simulate swap process
-    setTimeout(() => {
-      alert('Swap functionality will be implemented with smart contracts');
+    try {
+      const fromTokenData = tokens.find(t => t.symbol === fromToken);
+      const toTokenData = tokens.find(t => t.symbol === toToken);
+
+      if (!fromTokenData || !toTokenData) {
+        throw new Error('Token not found');
+      }
+
+      const amountIn = ethers.parseEther(fromAmount);
+      const slippagePercent = parseFloat(slippage) / 100;
+      const minAmountOut = amountIn * BigInt(Math.floor((1 - slippagePercent) * 100)) / BigInt(100);
+
+      // For ETH swaps
+      if (fromToken === 'ETH') {
+        const tx = await exchangeContract.swap(
+          fromTokenData.address,
+          toTokenData.address,
+          amountIn,
+          minAmountOut,
+          { value: amountIn }
+        );
+        await tx.wait();
+        alert('Swap completed successfully!');
+      } else {
+        // For ERC20 token swaps, need approval first
+        const tokenContract = tokenContracts[fromToken];
+        if (!tokenContract) {
+          throw new Error('Token contract not found');
+        }
+
+        // Approve spending
+        const approveTx = await tokenContract.approve(deployments.exchangeAddress, amountIn);
+        await approveTx.wait();
+
+        // Perform swap
+        const swapTx = await exchangeContract.swap(
+          fromTokenData.address,
+          toTokenData.address,
+          amountIn,
+          minAmountOut
+        );
+        await swapTx.wait();
+        alert('Swap completed successfully!');
+      }
+
+      // Reset form
+      setFromAmount('');
+      setToAmount('');
+    } catch (error) {
+      console.error('Swap error:', error);
+      alert('Swap failed: ' + error.message);
+    } finally {
       setIsLoading(false);
-    }, 2000);
+    }
   };
 
   const switchTokens = () => {

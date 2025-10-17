@@ -10,6 +10,8 @@ import {
   FaEyeSlash,
 } from 'react-icons/fa';
 import { useWallet } from '../context/WalletContext';
+import { getTokenPrices } from '../utils/priceFeeds';
+import axios from 'axios';
 
 const TradeDashboard = () => {
   const { account } = useWallet();
@@ -19,6 +21,67 @@ const TradeDashboard = () => {
     totalTrades: 0,
   });
   const [showBalances, setShowBalances] = useState(true);
+  const [tokenPrices, setTokenPrices] = useState({});
+  const [userTrades, setUserTrades] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  // Fetch data on component mount
+  useEffect(() => {
+    fetchDashboardData();
+  }, [account]);
+
+  const fetchDashboardData = async () => {
+    if (!account) return;
+
+    try {
+      setLoading(true);
+
+      // Fetch token prices
+      const prices = await getTokenPrices();
+      setTokenPrices(prices);
+
+      // Fetch user trades from backend
+      const response = await axios.get(`${import.meta.env.VITE_API_URL}/trades/user/${account}`);
+      if (response.data.success) {
+        setUserTrades(response.data.data);
+      }
+
+      // Calculate portfolio stats
+      calculatePortfolioStats(prices);
+
+    } catch (error) {
+      console.error('Error fetching dashboard data:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const calculatePortfolioStats = (prices) => {
+    // Mock portfolio calculation - in real app, this would come from wallet balances
+    const mockBalances = {
+      ETH: 2.45,
+      USDC: 1250,
+      DAI: 500,
+      WBTC: 0.025
+    };
+
+    let totalValue = 0;
+    let totalChange = 0;
+
+    Object.entries(mockBalances).forEach(([symbol, balance]) => {
+      const price = prices[symbol]?.price || 0;
+      const change24h = prices[symbol]?.change24h || 0;
+
+      totalValue += balance * price;
+      totalChange += (balance * price * change24h) / 100;
+    });
+
+    setStats({
+      totalValue: totalValue.toLocaleString('en-US', { maximumFractionDigits: 2 }),
+      dailyChange: totalChange.toFixed(2),
+      totalTrades: userTrades.length,
+    });
+  };
 
   // Professional token data with more details
   const popularTokens = [
@@ -69,38 +132,17 @@ const TradeDashboard = () => {
   ];
 
   // Enhanced transaction history
-  const recentTransactions = [
-    {
-      type: 'Swap',
-      from: 'ETH',
-      to: 'USDC',
-      amount: '0.5',
-      received: '925.00',
-      time: '2 mins ago',
-      status: 'completed',
-      txHash: '0x1234...abcd'
-    },
-    {
-      type: 'Swap',
-      from: 'USDC',
-      to: 'DAI',
-      amount: '1000',
-      received: '995.00',
-      time: '1 hour ago',
-      status: 'completed',
-      txHash: '0x5678...efgh'
-    },
-    {
-      type: 'Swap',
-      from: 'DAI',
-      to: 'ETH',
-      amount: '500',
-      received: '0.27',
-      time: '3 hours ago',
-      status: 'completed',
-      txHash: '0x9abc...ijkl'
-    },
-  ];
+  // Format user trades for display
+  const recentTransactions = userTrades.slice(0, 5).map(trade => ({
+    type: 'Swap',
+    from: trade.fromToken,
+    to: trade.toToken,
+    amount: trade.fromAmount.toString(),
+    received: trade.toAmount.toString(),
+    time: new Date(trade.timestamp).toLocaleString(),
+    status: trade.status,
+    txHash: trade.txHash
+  }));
 
   useEffect(() => {
     // Enhanced stats for connected wallet
@@ -230,7 +272,19 @@ const TradeDashboard = () => {
         </div>
 
         <div className="space-y-4">
-          {recentTransactions.map((tx, index) => (
+          {loading ? (
+            <div className="text-center py-8">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
+              <p className="text-gray-500 dark:text-gray-400">Loading transactions...</p>
+            </div>
+          ) : recentTransactions.length === 0 ? (
+            <div className="text-center py-8">
+              <FaHistory className="text-4xl text-gray-300 dark:text-gray-600 mx-auto mb-4" />
+              <p className="text-gray-500 dark:text-gray-400">No transactions yet</p>
+              <p className="text-sm text-gray-400 dark:text-gray-500 mt-2">Start trading to see your transaction history</p>
+            </div>
+          ) : (
+            recentTransactions.map((tx, index) => (
             <div
               key={index}
               className="flex items-center justify-between p-4 rounded-lg border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors"
@@ -260,7 +314,7 @@ const TradeDashboard = () => {
                 </div>
               </div>
             </div>
-          ))}
+          )))}
         </div>
       </div>
     </div>

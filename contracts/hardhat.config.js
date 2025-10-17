@@ -20,7 +20,7 @@ module.exports = {
       url: "http://127.0.0.1:8545",
     },
     sepolia: {
-      url: "https://eth-sepolia.g.alchemy.com/v2/demo",
+      url: "https://sepolia.infura.io/v3/84842078b09946638c03157f83405213",
       accounts: ["0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80"],
     },
     // mainnet: {

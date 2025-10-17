@@ -5,6 +5,7 @@ import { ethers } from 'ethers';
 import deployments from '../contracts/deployments.json';
 import exchangeABI from '../contracts/abis/FluxTradeExchange.json';
 import tokenABI from '../contracts/abis/ERC20.json';
+import { getTokenPrices } from '../utils/priceFeeds';
 
 const TokenSwap = () => {
   const { account, signer, provider } = useWallet();
@@ -17,6 +18,7 @@ const TokenSwap = () => {
   const [currentNetwork, setCurrentNetwork] = useState('demo');
   const [exchangeContract, setExchangeContract] = useState(null);
   const [tokenContracts, setTokenContracts] = useState({});
+  const [tokenPrices, setTokenPrices] = useState({});
 
   // Update network status
   useEffect(() => {
@@ -28,6 +30,19 @@ const TokenSwap = () => {
       updateNetwork();
     }
   }, [provider]);
+
+  // Fetch real token prices
+  useEffect(() => {
+    const fetchPrices = async () => {
+      const prices = await getTokenPrices();
+      setTokenPrices(prices);
+    };
+    fetchPrices();
+
+    // Refresh prices every 5 minutes
+    const interval = setInterval(fetchPrices, 5 * 60 * 1000);
+    return () => clearInterval(interval);
+  }, []);
 
   // Initialize contracts when wallet is connected
   useEffect(() => {
@@ -82,14 +97,14 @@ const TokenSwap = () => {
     }
   };
 
-    // Professional token list with contract addresses
+    // Professional token list with real prices
   const getTokenList = () => {
     const currentNetwork = deployments[window.location.hostname === 'localhost' ? 'localhost' : 'demo'];
     return [
-      { symbol: 'ETH', name: 'Ethereum', balance: '2.45', price: '$1,850.00', icon: 'Ξ', address: '0x0000000000000000000000000000000000000000' },
-      { symbol: 'USDC', name: 'USD Coin', balance: '1,250.00', price: '$1.00', icon: '💲', address: currentNetwork?.tokens?.USDC || '' },
-      { symbol: 'DAI', name: 'Dai', balance: '500.00', price: '$1.00', icon: '🪙', address: currentNetwork?.tokens?.DAI || '' },
-      { symbol: 'WBTC', name: 'Wrapped Bitcoin', balance: '0.025', price: '$43,250.00', icon: '₿', address: currentNetwork?.tokens?.WBTC || '' },
+      { symbol: 'ETH', name: 'Ethereum', balance: '2.45', price: tokenPrices.ETH?.price || 1850.00, icon: 'Ξ', address: '0x0000000000000000000000000000000000000000' },
+      { symbol: 'USDC', name: 'USD Coin', balance: '1,250.00', price: tokenPrices.USDC?.price || 1.00, icon: '💲', address: currentNetwork?.tokens?.USDC || '' },
+      { symbol: 'DAI', name: 'Dai', balance: '500.00', price: tokenPrices.DAI?.price || 1.00, icon: '🪙', address: currentNetwork?.tokens?.DAI || '' },
+      { symbol: 'WBTC', name: 'Wrapped Bitcoin', balance: '0.025', price: tokenPrices.WBTC?.price || 43250.00, icon: '₿', address: currentNetwork?.tokens?.WBTC || '' },
     ];
   };
 

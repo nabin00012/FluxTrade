@@ -51,7 +51,6 @@ const tradeSchema = new mongoose.Schema(
 
 // Index for faster queries
 tradeSchema.index({ walletAddress: 1, createdAt: -1 });
-tradeSchema.index({ transactionHash: 1 });
 
 const Trade = mongoose.model('Trade', tradeSchema);
 

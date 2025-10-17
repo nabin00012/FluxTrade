@@ -41,9 +41,14 @@ const TradeDashboard = () => {
       setTokenPrices(prices);
 
       // Fetch user trades from backend
-      const response = await axios.get(`${import.meta.env.VITE_API_URL}/trades/user/${account}`);
-      if (response.data.success) {
-        setUserTrades(response.data.data);
+      try {
+        const response = await axios.get(`${import.meta.env.VITE_API_URL}/trades/user/${account}`);
+        if (response.data.success) {
+          setUserTrades(response.data.data);
+        }
+      } catch (apiError) {
+        console.log('No trades found for user, using empty array');
+        setUserTrades([]);
       }
 
       // Calculate portfolio stats
@@ -183,13 +188,19 @@ const TradeDashboard = () => {
       <div className="trading-card">
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-xl font-semibold text-gray-900 dark:text-white">Portfolio Overview</h2>
-          <button
-            onClick={() => setShowBalances(!showBalances)}
-            className="flex items-center text-sm text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 transition-colors"
-          >
-            {showBalances ? <FaEyeSlash className="mr-1" /> : <FaEye className="mr-1" />}
-            {showBalances ? 'Hide' : 'Show'} Balances
-          </button>
+          <div className="flex items-center space-x-4">
+            <div className="flex items-center text-xs text-green-600 dark:text-green-400">
+              <div className="w-1.5 h-1.5 bg-green-400 rounded-full mr-2 animate-pulse"></div>
+              Live Prices
+            </div>
+            <button
+              onClick={() => setShowBalances(!showBalances)}
+              className="flex items-center text-sm text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 transition-colors"
+            >
+              {showBalances ? <FaEyeSlash className="mr-1" /> : <FaEye className="mr-1" />}
+              {showBalances ? 'Hide' : 'Show'} Balances
+            </button>
+          </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">

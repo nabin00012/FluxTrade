@@ -46,8 +46,7 @@ const userSchema = new mongoose.Schema(
   }
 );
 
-// Index for faster lookups
-userSchema.index({ walletAddress: 1 });
+// Index for faster lookups (walletAddress is already indexed by unique constraint)
 
 const User = mongoose.model('User', userSchema);
 

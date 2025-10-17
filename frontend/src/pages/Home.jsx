@@ -1,8 +1,10 @@
 import { FaShieldAlt, FaRocket, FaUsers, FaChartLine, FaExchangeAlt, FaWallet } from 'react-icons/fa';
 import TradeDashboard from '../components/TradeDashboard';
 import TokenSwap from '../components/TokenSwap';
+import { useWallet } from '../context/WalletContext';
 
 const Home = () => {
+  const { account, connectWallet, isConnecting } = useWallet();
 
   return (
     <div className="min-h-screen">
@@ -55,6 +57,69 @@ const Home = () => {
             <div className="text-center">
               <div className="text-3xl lg:text-4xl font-bold text-warning mb-2">0.1%</div>
               <div className="text-sm text-gray-600 dark:text-gray-400">Trading Fee</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* MetaMask Connection & Live Prices Section */}
+      <section className="bg-white dark:bg-gray-800 py-12 border-b border-gray-200 dark:border-gray-700">
+        <div className="max-w-7xl mx-auto mobile-padding">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+            {/* MetaMask Connection */}
+            <div className="text-center lg:text-left">
+              <h2 className="text-2xl lg:text-3xl font-bold text-gray-900 dark:text-white mb-4">
+                Connect Your MetaMask Wallet
+              </h2>
+              <div className="flex items-center justify-center lg:justify-start mb-4">
+                <div className={`w-3 h-3 rounded-full mr-2 ${account ? 'bg-green-400' : 'bg-gray-400'}`}></div>
+                <span className={`text-sm font-medium ${account ? 'text-green-600 dark:text-green-400' : 'text-gray-500'}`}>
+                  {account ? 'Wallet Connected' : 'Wallet Not Connected'}
+                </span>
+              </div>
+              {account && (
+                <p className="text-sm text-gray-600 dark:text-gray-400 mb-4 font-mono">
+                  {account}
+                </p>
+              )}
+              <p className="text-gray-600 dark:text-gray-300 mb-6">
+                To start trading, connect your MetaMask wallet. If you don't have MetaMask installed,
+                download the Chrome extension for the best experience.
+              </p>
+              <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
+                <a
+                  href="https://chrome.google.com/webstore/detail/metamask/nkbihfbeogaeaoehlefnkodbefgpgknn"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="btn-primary inline-flex items-center"
+                >
+                  <FaWallet className="mr-2" />
+                  Download MetaMask Extension
+                </a>
+                <button
+                  onClick={connectWallet}
+                  disabled={isConnecting}
+                  className="btn-secondary inline-flex items-center disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <FaWallet className="mr-2" />
+                  {isConnecting ? 'Connecting...' : account ? `${account.slice(0, 6)}...${account.slice(-4)}` : 'Connect Wallet'}
+                </button>
+              </div>
+            </div>
+
+            {/* Live Prices Notice */}
+            <div className="text-center lg:text-right">
+              <div className="inline-flex items-center px-4 py-2 rounded-full bg-green-100 dark:bg-green-900/20 text-green-600 dark:text-green-400 text-sm font-medium mb-4">
+                <div className="w-2 h-2 bg-green-400 rounded-full mr-2 animate-pulse"></div>
+                Live Prices Active
+              </div>
+              <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
+                Real-Time Cryptocurrency Prices
+              </h3>
+              <p className="text-gray-600 dark:text-gray-300">
+                All prices are fetched live from CoinGecko API and updated every 5 minutes.
+                Trade with confidence using the most accurate market data available.
+              </p>
             </div>
           </div>
         </div>
@@ -140,9 +205,13 @@ const Home = () => {
             Start with as little as $10 and experience professional-grade trading.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <button className="bg-white text-primary font-semibold px-8 py-4 rounded-lg hover:bg-gray-100 transition-colors">
+            <button
+              onClick={connectWallet}
+              disabled={isConnecting}
+              className="bg-white text-primary font-semibold px-8 py-4 rounded-lg hover:bg-gray-100 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            >
               <FaWallet className="inline mr-2" />
-              Connect Wallet
+              {isConnecting ? 'Connecting...' : account ? `${account.slice(0, 6)}...${account.slice(-4)}` : 'Connect Wallet'}
             </button>
             <button className="border-2 border-white text-white font-semibold px-8 py-4 rounded-lg hover:bg-white/10 transition-colors">
               Learn More

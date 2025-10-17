@@ -53,9 +53,7 @@ const tokenSchema = new mongoose.Schema(
   }
 );
 
-// Index for faster queries
-tokenSchema.index({ symbol: 1 });
-tokenSchema.index({ contractAddress: 1 });
+// Indexes are already created by unique constraints on symbol and contractAddress
 
 const Token = mongoose.model('Token', tokenSchema);
 

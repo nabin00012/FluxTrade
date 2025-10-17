@@ -15,7 +15,7 @@ const TokenSwap = () => {
   const [toAmount, setToAmount] = useState('');
   const [slippage, setSlippage] = useState('0.5');
   const [isLoading, setIsLoading] = useState(false);
-  const [currentNetwork, setCurrentNetwork] = useState('demo');
+  const [currentNetwork, setCurrentNetwork] = useState('demo'); // Default to demo mode
   const [exchangeContract, setExchangeContract] = useState(null);
   const [tokenContracts, setTokenContracts] = useState({});
   const [tokenPrices, setTokenPrices] = useState({});
@@ -89,8 +89,8 @@ const TokenSwap = () => {
       const chainId = network.chainId;
 
       if (chainId === 31337n) return 'localhost';
-      if (chainId === 11155111n) return 'sepolia';
-      return 'demo'; // For mainnet or unknown networks
+      // For all other networks (including mainnet, testnets), use demo mode
+      return 'demo';
     } catch (error) {
       console.error('Error getting network:', error);
       return 'demo';
@@ -126,14 +126,50 @@ const TokenSwap = () => {
       return;
     }
 
-    // Check if contracts are available
-    if (!exchangeContract) {
-      alert('Smart contracts not available on this network. Please switch to localhost network for testing, or use demo mode.');
+    // Check if contracts are available - allow demo mode
+    const isDemoMode = currentNetwork === 'demo' || !exchangeContract;
+    if (!exchangeContract && currentNetwork !== 'demo') {
+      alert('Smart contracts not available on this network. Switching to demo mode for testing.');
+      setCurrentNetwork('demo');
       return;
     }
 
     setIsLoading(true);
     try {
+      // Demo mode - just show success message
+      if (isDemoMode) {
+        // Simulate processing time
+        await new Promise(resolve => setTimeout(resolve, 2000));
+
+        // Create a mock trade record
+        const mockTrade = {
+          fromToken,
+          toToken,
+          fromAmount,
+          toAmount,
+          exchangeRate: (parseFloat(toAmount) / parseFloat(fromAmount)).toFixed(6),
+          walletAddress: account,
+          status: 'completed',
+          txHash: `demo_${Date.now()}`,
+          timestamp: new Date()
+        };
+
+        // Try to save to backend (optional)
+        try {
+          await axios.post(`${import.meta.env.VITE_API_URL}/trades`, mockTrade);
+        } catch (apiError) {
+          console.log('Could not save demo trade to backend, continuing...');
+        }
+
+        alert(`🎉 Demo Swap Successful!\n\nSwapped ${fromAmount} ${fromToken} for ${toAmount} ${toToken}\n\nThis was a demo transaction. Connect to localhost network or deploy contracts to testnet for real swaps.`);
+
+        // Reset form
+        setFromAmount('');
+        setToAmount('');
+        return;
+      }
+
+      // Real contract execution
       const fromTokenData = tokens.find(t => t.symbol === fromToken);
       const toTokenData = tokens.find(t => t.symbol === toToken);
 
@@ -222,6 +258,28 @@ const TokenSwap = () => {
         </div>
       </div>
 
+      {/* Live Prices Indicator */}
+      <div className="mb-4 flex items-center justify-center">
+        <div className="inline-flex items-center px-3 py-1 rounded-full bg-green-100 dark:bg-green-900/20 text-green-600 dark:text-green-400 text-xs font-medium">
+          <div className="w-1.5 h-1.5 bg-green-400 rounded-full mr-2 animate-pulse"></div>
+          Live Prices from CoinGecko
+        </div>
+      </div>
+
+      {/* Demo Mode Banner */}
+      {currentNetwork === 'demo' && (
+        <div className="mb-6 p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
+          <div className="flex items-center text-blue-600 dark:text-blue-400">
+            <FaInfoCircle className="mr-2" />
+            <span className="text-sm font-medium">Demo Mode Active</span>
+          </div>
+          <p className="text-sm text-blue-600 dark:text-blue-400 mt-1">
+            You're using demo mode. Swaps are simulated and won't execute real transactions.
+            Connect to localhost network for real contract testing.
+          </p>
+        </div>
+      )}
+
       {/* From Token Section */}
       <div className="mb-4">
         <div className="flex items-center justify-between mb-2">
@@ -253,7 +311,7 @@ const TokenSwap = () => {
           </div>
         </div>
         <div className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-          ≈ ${fromAmount ? (parseFloat(fromAmount) * parseFloat(selectedFromToken?.price.replace(/[$,]/g, '') || 0)).toLocaleString() : '0.00'}
+          ≈ ${fromAmount ? (parseFloat(fromAmount) * parseFloat(selectedFromToken?.price || 0)).toLocaleString() : '0.00'}
         </div>
       </div>
 
@@ -290,7 +348,7 @@ const TokenSwap = () => {
           </div>
         </div>
         <div className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-          ≈ ${toAmount ? (parseFloat(toAmount) * parseFloat(selectedToToken?.price.replace(/[$,]/g, '') || 0)).toLocaleString() : '0.00'}
+          ≈ ${toAmount ? (parseFloat(toAmount) * parseFloat(selectedToToken?.price || 0)).toLocaleString() : '0.00'}
         </div>
       </div>
 
@@ -364,12 +422,14 @@ const TokenSwap = () => {
             <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
             Processing...
           </div>
+        ) : !account ? (
+          'Connect Wallet to Swap'
+        ) : currentNetwork === 'demo' ? (
+          'Demo Swap (No Real Transaction)'
         ) : !exchangeContract ? (
           'Demo Mode - Connect to Localhost'
-        ) : account ? (
-          'Swap Tokens'
         ) : (
-          'Connect Wallet to Swap'
+          'Swap Tokens'
         )}
       </button>
 

@@ -1,60 +1,155 @@
+import { FaShieldAlt, FaRocket, FaUsers, FaChartLine, FaExchangeAlt, FaWallet } from 'react-icons/fa';
 import TradeDashboard from '../components/TradeDashboard';
 import TokenSwap from '../components/TokenSwap';
 
 const Home = () => {
+
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="min-h-screen">
       {/* Hero Section */}
-      <div className="text-center mb-12">
-        <h1 className="text-5xl md:text-6xl font-bold mb-4">
-          Trade on the{' '}
-          <span className="gradient-text">Future of Finance</span>
-        </h1>
-        <p className="text-xl text-gray-400 max-w-2xl mx-auto">
-          Experience lightning-fast, secure, and decentralized trading with
-          FluxTrade. Your gateway to DeFi.
-        </p>
-      </div>
+      <section className="relative overflow-hidden bg-gradient-to-br from-primary/5 via-accent/5 to-primary/10 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
+        <div className="absolute inset-0 bg-grid-pattern opacity-5"></div>
+        <div className="relative max-w-7xl mx-auto mobile-padding py-16 lg:py-24">
+          <div className="text-center mb-16">
+            <div className="inline-flex items-center px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-medium mb-6">
+              <FaRocket className="mr-2" />
+              Trusted by 10,000+ traders worldwide
+            </div>
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 dark:text-white mb-6 leading-tight">
+              Professional{' '}
+              <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+                DeFi Trading
+              </span>{' '}
+              Platform
+            </h1>
+            <p className="text-lg sm:text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto mb-8 leading-relaxed">
+              Experience institutional-grade trading with lightning-fast execution,
+              advanced security, and competitive fees. Trade cryptocurrencies with confidence.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <button className="btn-primary text-lg px-8 py-4">
+                <FaExchangeAlt className="inline mr-2" />
+                Start Trading
+              </button>
+              <button className="btn-secondary text-lg px-8 py-4">
+                <FaChartLine className="inline mr-2" />
+                View Markets
+              </button>
+            </div>
+          </div>
 
-      {/* Main Content */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Token Swap - Takes 1 column */}
-        <div className="lg:col-span-1">
-          <TokenSwap />
+          {/* Trading Stats */}
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
+            <div className="text-center">
+              <div className="text-3xl lg:text-4xl font-bold text-primary mb-2">$2.1B+</div>
+              <div className="text-sm text-gray-600 dark:text-gray-400">Trading Volume</div>
+            </div>
+            <div className="text-center">
+              <div className="text-3xl lg:text-4xl font-bold text-accent mb-2">10K+</div>
+              <div className="text-sm text-gray-600 dark:text-gray-400">Active Traders</div>
+            </div>
+            <div className="text-center">
+              <div className="text-3xl lg:text-4xl font-bold text-success mb-2">99.9%</div>
+              <div className="text-sm text-gray-600 dark:text-gray-400">Uptime</div>
+            </div>
+            <div className="text-center">
+              <div className="text-3xl lg:text-4xl font-bold text-warning mb-2">0.1%</div>
+              <div className="text-sm text-gray-600 dark:text-gray-400">Trading Fee</div>
+            </div>
+          </div>
         </div>
+      </section>
 
-        {/* Trade Dashboard - Takes 2 columns */}
-        <div className="lg:col-span-2">
-          <TradeDashboard />
+      {/* Main Trading Interface */}
+      <section className="max-w-7xl mx-auto mobile-padding py-16">
+        <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
+          {/* Token Swap - Left Column */}
+          <div className="xl:col-span-1">
+            <div className="sticky top-8">
+              <TokenSwap />
+            </div>
+          </div>
+
+          {/* Trade Dashboard - Right Columns */}
+          <div className="xl:col-span-2">
+            <TradeDashboard />
+          </div>
         </div>
-      </div>
+      </section>
 
       {/* Features Section */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-12">
-        <div className="glass-card p-6 text-center hover:shadow-neon transition-all duration-300">
-          <div className="text-4xl mb-4">⚡</div>
-          <h3 className="text-xl font-bold mb-2">Lightning Fast</h3>
-          <p className="text-gray-400">
-            Execute trades in milliseconds with our optimized smart contracts
-          </p>
-        </div>
+      <section className="bg-white dark:bg-gray-800 py-16">
+        <div className="max-w-7xl mx-auto mobile-padding">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 dark:text-white mb-4">
+              Why Choose FluxTrade?
+            </h2>
+            <p className="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
+              Built for professional traders with enterprise-grade security and performance
+            </p>
+          </div>
 
-        <div className="glass-card p-6 text-center hover:shadow-neon transition-all duration-300">
-          <div className="text-4xl mb-4">🔒</div>
-          <h3 className="text-xl font-bold mb-2">Secure & Audited</h3>
-          <p className="text-gray-400">
-            Your assets are protected by battle-tested smart contracts
-          </p>
-        </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div className="trading-card text-center group">
+              <div className="w-16 h-16 bg-primary/10 rounded-xl flex items-center justify-center mx-auto mb-6 group-hover:bg-primary/20 transition-colors">
+                <FaShieldAlt className="text-2xl text-primary" />
+              </div>
+              <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-3">
+                Bank-Grade Security
+              </h3>
+              <p className="text-gray-600 dark:text-gray-300">
+                Multi-signature wallets, audited smart contracts, and institutional custody solutions
+              </p>
+            </div>
 
-        <div className="glass-card p-6 text-center hover:shadow-neon transition-all duration-300">
-          <div className="text-4xl mb-4">💎</div>
-          <h3 className="text-xl font-bold mb-2">Low Fees</h3>
-          <p className="text-gray-400">
-            Enjoy minimal transaction fees and maximize your returns
-          </p>
+            <div className="trading-card text-center group">
+              <div className="w-16 h-16 bg-accent/10 rounded-xl flex items-center justify-center mx-auto mb-6 group-hover:bg-accent/20 transition-colors">
+                <FaRocket className="text-2xl text-accent" />
+              </div>
+              <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-3">
+                Lightning Fast
+              </h3>
+              <p className="text-gray-600 dark:text-gray-300">
+                Sub-second trade execution with optimized Layer 2 solutions and advanced routing
+              </p>
+            </div>
+
+            <div className="trading-card text-center group">
+              <div className="w-16 h-16 bg-success/10 rounded-xl flex items-center justify-center mx-auto mb-6 group-hover:bg-success/20 transition-colors">
+                <FaUsers className="text-2xl text-success" />
+              </div>
+              <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-3">
+                Institutional Support
+              </h3>
+              <p className="text-gray-600 dark:text-gray-300">
+                Dedicated account management, custom integrations, and priority support for institutions
+              </p>
+            </div>
+          </div>
         </div>
-      </div>
+      </section>
+
+      {/* CTA Section */}
+      <section className="bg-gradient-professional text-white py-16">
+        <div className="max-w-4xl mx-auto text-center mobile-padding">
+          <h2 className="text-3xl lg:text-4xl font-bold mb-6">
+            Ready to Start Trading?
+          </h2>
+          <p className="text-lg opacity-90 mb-8 max-w-2xl mx-auto">
+            Join thousands of traders who trust FluxTrade for their DeFi trading needs.
+            Start with as little as $10 and experience professional-grade trading.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <button className="bg-white text-primary font-semibold px-8 py-4 rounded-lg hover:bg-gray-100 transition-colors">
+              <FaWallet className="inline mr-2" />
+              Connect Wallet
+            </button>
+            <button className="border-2 border-white text-white font-semibold px-8 py-4 rounded-lg hover:bg-white/10 transition-colors">
+              Learn More
+            </button>
+          </div>
+        </div>
+      </section>
     </div>
   );
 };

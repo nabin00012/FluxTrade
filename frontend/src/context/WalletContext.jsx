@@ -1,8 +1,9 @@
-import { createContext, useState, useContext, useEffect } from 'react';
+import { createContext, useState, useContext, useEffect, useCallback } from 'react';
 import { ethers } from 'ethers';
 
 const WalletContext = createContext();
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const useWallet = () => {
   const context = useContext(WalletContext);
   if (!context) {
@@ -21,21 +22,6 @@ export const WalletProvider = ({ children }) => {
   // Check if wallet is already connected on mount
   useEffect(() => {
     checkIfWalletIsConnected();
-  }, []);
-
-  // Listen for account changes
-  useEffect(() => {
-    if (window.ethereum) {
-      window.ethereum.on('accountsChanged', handleAccountsChanged);
-      window.ethereum.on('chainChanged', handleChainChanged);
-    }
-
-    return () => {
-      if (window.ethereum) {
-        window.ethereum.removeListener('accountsChanged', handleAccountsChanged);
-        window.ethereum.removeListener('chainChanged', handleChainChanged);
-      }
-    };
   }, []);
 
   const checkIfWalletIsConnected = async () => {
@@ -94,17 +80,32 @@ export const WalletProvider = ({ children }) => {
     setChainId(null);
   };
 
-  const handleAccountsChanged = (accounts) => {
+  const handleAccountsChanged = useCallback((accounts) => {
     if (accounts.length === 0) {
       disconnectWallet();
     } else {
       setAccount(accounts[0]);
     }
-  };
+  }, []);
 
-  const handleChainChanged = () => {
+  const handleChainChanged = useCallback(() => {
     window.location.reload();
-  };
+  }, []);
+
+  // Listen for account changes
+  useEffect(() => {
+    if (window.ethereum) {
+      window.ethereum.on('accountsChanged', handleAccountsChanged);
+      window.ethereum.on('chainChanged', handleChainChanged);
+    }
+
+    return () => {
+      if (window.ethereum) {
+        window.ethereum.removeListener('accountsChanged', handleAccountsChanged);
+        window.ethereum.removeListener('chainChanged', handleChainChanged);
+      }
+    };
+  }, [handleAccountsChanged, handleChainChanged]);
 
   const value = {
     account,

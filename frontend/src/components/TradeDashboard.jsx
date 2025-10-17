@@ -5,6 +5,9 @@ import {
   FaArrowDown,
   FaCoins,
   FaHistory,
+  FaWallet,
+  FaEye,
+  FaEyeSlash,
 } from 'react-icons/fa';
 import { useWallet } from '../context/WalletContext';
 
@@ -15,26 +18,93 @@ const TradeDashboard = () => {
     dailyChange: '0.00',
     totalTrades: 0,
   });
+  const [showBalances, setShowBalances] = useState(true);
 
-  // Placeholder data for popular tokens
+  // Professional token data with more details
   const popularTokens = [
-    { symbol: 'ETH', name: 'Ethereum', price: '1,850.00', change: '+5.2%', isUp: true },
-    { symbol: 'BTC', name: 'Bitcoin', price: '43,250.00', change: '+3.8%', isUp: true },
-    { symbol: 'USDC', name: 'USD Coin', price: '1.00', change: '+0.01%', isUp: true },
-    { symbol: 'DAI', name: 'Dai', price: '1.00', change: '-0.02%', isUp: false },
+    {
+      symbol: 'ETH',
+      name: 'Ethereum',
+      price: '1,850.00',
+      change: '+5.2%',
+      changeValue: '+96.20',
+      isUp: true,
+      volume: '2.1B',
+      marketCap: '221.8B',
+      icon: 'Ξ'
+    },
+    {
+      symbol: 'BTC',
+      name: 'Bitcoin',
+      price: '43,250.00',
+      change: '+3.8%',
+      changeValue: '+1,587.50',
+      isUp: true,
+      volume: '15.2B',
+      marketCap: '843.2B',
+      icon: '₿'
+    },
+    {
+      symbol: 'USDC',
+      name: 'USD Coin',
+      price: '1.00',
+      change: '+0.01%',
+      changeValue: '+0.0001',
+      isUp: true,
+      volume: '8.9B',
+      marketCap: '25.4B',
+      icon: '💲'
+    },
+    {
+      symbol: 'DAI',
+      name: 'Dai',
+      price: '1.00',
+      change: '-0.02%',
+      changeValue: '-0.0002',
+      isUp: false,
+      volume: '1.2B',
+      marketCap: '5.3B',
+      icon: '🪙'
+    },
   ];
 
-  // Placeholder transaction history
+  // Enhanced transaction history
   const recentTransactions = [
-    { type: 'Swap', from: 'ETH', to: 'USDC', amount: '0.5', time: '2 mins ago' },
-    { type: 'Swap', from: 'USDC', to: 'DAI', amount: '1000', time: '1 hour ago' },
-    { type: 'Swap', from: 'DAI', to: 'ETH', amount: '500', time: '3 hours ago' },
+    {
+      type: 'Swap',
+      from: 'ETH',
+      to: 'USDC',
+      amount: '0.5',
+      received: '925.00',
+      time: '2 mins ago',
+      status: 'completed',
+      txHash: '0x1234...abcd'
+    },
+    {
+      type: 'Swap',
+      from: 'USDC',
+      to: 'DAI',
+      amount: '1000',
+      received: '995.00',
+      time: '1 hour ago',
+      status: 'completed',
+      txHash: '0x5678...efgh'
+    },
+    {
+      type: 'Swap',
+      from: 'DAI',
+      to: 'ETH',
+      amount: '500',
+      received: '0.27',
+      time: '3 hours ago',
+      status: 'completed',
+      txHash: '0x9abc...ijkl'
+    },
   ];
 
   useEffect(() => {
-    // Placeholder for fetching user stats
+    // Enhanced stats for connected wallet
     if (account) {
-      // This would be replaced with actual API calls
       setStats({
         totalValue: '12,450.00',
         dailyChange: '+245.50',
@@ -45,75 +115,102 @@ const TradeDashboard = () => {
 
   if (!account) {
     return (
-      <div className="glass-card p-12 text-center">
-        <FaChartLine className="text-6xl text-primary mx-auto mb-4 opacity-50" />
-        <h3 className="text-2xl font-bold mb-2">Connect Your Wallet</h3>
-        <p className="text-gray-400">
-          Connect your wallet to view your trading dashboard
+      <div className="trading-card text-center">
+        <div className="w-16 h-16 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center mx-auto mb-6">
+          <FaWallet className="text-2xl text-gray-400" />
+        </div>
+        <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-3">
+          Connect Your Wallet
+        </h3>
+        <p className="text-gray-600 dark:text-gray-300 mb-6 max-w-md mx-auto">
+          Connect your wallet to view your trading dashboard, portfolio analytics, and transaction history.
         </p>
+        <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
+          <div className="flex items-center justify-center text-blue-600 dark:text-blue-400 text-sm">
+            <FaWallet className="mr-2" />
+            Secure connection powered by MetaMask
+          </div>
+        </div>
       </div>
     );
   }
 
   return (
     <div className="space-y-6">
-      {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="glass-card p-6">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-gray-400">Total Portfolio Value</span>
-            <FaCoins className="text-primary" />
-          </div>
-          <div className="text-3xl font-bold">${stats.totalValue}</div>
+      {/* Portfolio Overview */}
+      <div className="trading-card">
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="text-xl font-semibold text-gray-900 dark:text-white">Portfolio Overview</h2>
+          <button
+            onClick={() => setShowBalances(!showBalances)}
+            className="flex items-center text-sm text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 transition-colors"
+          >
+            {showBalances ? <FaEyeSlash className="mr-1" /> : <FaEye className="mr-1" />}
+            {showBalances ? 'Hide' : 'Show'} Balances
+          </button>
         </div>
 
-        <div className="glass-card p-6">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-gray-400">24h Change</span>
-            <FaArrowUp className="text-green-400" />
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="text-center">
+            <div className="flex items-center justify-center mb-2">
+              <FaCoins className="text-primary mr-2" />
+              <span className="text-sm text-gray-600 dark:text-gray-400">Total Value</span>
+            </div>
+            <div className="text-3xl font-bold text-gray-900 dark:text-white">
+              {showBalances ? `$${stats.totalValue}` : '••••••'}
+            </div>
           </div>
-          <div className="text-3xl font-bold text-green-400">
-            +${stats.dailyChange}
-          </div>
-        </div>
 
-        <div className="glass-card p-6">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-gray-400">Total Trades</span>
-            <FaHistory className="text-accent" />
+          <div className="text-center">
+            <div className="flex items-center justify-center mb-2">
+              <FaChartLine className={`mr-2 ${stats.dailyChange.startsWith('+') ? 'text-success' : 'text-danger'}`} />
+              <span className="text-sm text-gray-600 dark:text-gray-400">24h Change</span>
+            </div>
+            <div className={`text-3xl font-bold ${stats.dailyChange.startsWith('+') ? 'text-success' : 'text-danger'}`}>
+              {showBalances ? `${stats.dailyChange.startsWith('+') ? '+' : ''}$${stats.dailyChange}` : '••••••'}
+            </div>
           </div>
-          <div className="text-3xl font-bold">{stats.totalTrades}</div>
+
+          <div className="text-center">
+            <div className="flex items-center justify-center mb-2">
+              <FaHistory className="text-accent mr-2" />
+              <span className="text-sm text-gray-600 dark:text-gray-400">Total Trades</span>
+            </div>
+            <div className="text-3xl font-bold text-gray-900 dark:text-white">
+              {stats.totalTrades}
+            </div>
+          </div>
         </div>
       </div>
 
-      {/* Popular Tokens */}
-      <div className="glass-card p-6">
-        <h3 className="text-xl font-bold mb-4 flex items-center">
-          <FaChartLine className="mr-2 text-primary" />
-          Popular Tokens
-        </h3>
-        <div className="space-y-3">
+      {/* Market Overview */}
+      <div className="trading-card">
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="text-xl font-semibold text-gray-900 dark:text-white">Market Overview</h2>
+          <span className="text-sm text-gray-500 dark:text-gray-400">Live prices</span>
+        </div>
+
+        <div className="space-y-4">
           {popularTokens.map((token) => (
             <div
               key={token.symbol}
-              className="glass-card p-4 flex items-center justify-between hover:bg-white/20 transition-all duration-300 cursor-pointer"
+              className="flex items-center justify-between p-4 rounded-lg border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors cursor-pointer"
             >
               <div className="flex items-center space-x-4">
-                <div className="w-10 h-10 bg-gradient-to-r from-primary to-accent rounded-full flex items-center justify-center font-bold">
-                  {token.symbol.charAt(0)}
+                <div className="w-10 h-10 bg-gradient-to-br from-primary to-accent rounded-full flex items-center justify-center text-white font-bold">
+                  {token.icon}
                 </div>
                 <div>
-                  <div className="font-semibold">{token.symbol}</div>
-                  <div className="text-sm text-gray-400">{token.name}</div>
+                  <div className="font-semibold text-gray-900 dark:text-white">{token.symbol}</div>
+                  <div className="text-sm text-gray-500 dark:text-gray-400">{token.name}</div>
                 </div>
               </div>
+
               <div className="text-right">
-                <div className="font-semibold">${token.price}</div>
-                <div
-                  className={`text-sm flex items-center justify-end ${
-                    token.isUp ? 'text-green-400' : 'text-red-400'
-                  }`}
-                >
+                <div className="font-semibold text-gray-900 dark:text-white">${token.price}</div>
+                <div className={`text-sm flex items-center justify-end ${
+                  token.isUp ? 'text-success' : 'text-danger'
+                }`}>
                   {token.isUp ? <FaArrowUp className="mr-1" /> : <FaArrowDown className="mr-1" />}
                   {token.change}
                 </div>
@@ -124,25 +221,43 @@ const TradeDashboard = () => {
       </div>
 
       {/* Recent Transactions */}
-      <div className="glass-card p-6">
-        <h3 className="text-xl font-bold mb-4 flex items-center">
-          <FaHistory className="mr-2 text-accent" />
-          Recent Transactions
-        </h3>
-        <div className="space-y-3">
+      <div className="trading-card">
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="text-xl font-semibold text-gray-900 dark:text-white">Recent Transactions</h2>
+          <button className="text-sm text-primary hover:text-primary-dark transition-colors">
+            View All
+          </button>
+        </div>
+
+        <div className="space-y-4">
           {recentTransactions.map((tx, index) => (
             <div
               key={index}
-              className="glass-card p-4 flex items-center justify-between hover:bg-white/20 transition-all duration-300"
+              className="flex items-center justify-between p-4 rounded-lg border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors"
             >
-              <div>
-                <div className="font-semibold">
-                  {tx.type}: {tx.from} → {tx.to}
+              <div className="flex items-center space-x-4">
+                <div className="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center">
+                  <span className="text-primary font-bold text-sm">↔</span>
                 </div>
-                <div className="text-sm text-gray-400">{tx.time}</div>
+                <div>
+                  <div className="font-medium text-gray-900 dark:text-white">
+                    {tx.type}: {tx.from} → {tx.to}
+                  </div>
+                  <div className="text-sm text-gray-500 dark:text-gray-400 flex items-center">
+                    <span>{tx.time}</span>
+                    <span className="mx-2">•</span>
+                    <span className="text-success font-medium">{tx.status}</span>
+                  </div>
+                </div>
               </div>
+
               <div className="text-right">
-                <div className="font-semibold">{tx.amount}</div>
+                <div className="font-semibold text-gray-900 dark:text-white">
+                  {tx.amount} {tx.from}
+                </div>
+                <div className="text-sm text-gray-500 dark:text-gray-400">
+                  → {tx.received} {tx.to}
+                </div>
               </div>
             </div>
           ))}

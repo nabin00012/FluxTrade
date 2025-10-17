@@ -4,7 +4,7 @@ import TokenSwap from '../components/TokenSwap';
 import { useWallet } from '../context/WalletContext';
 
 const Home = () => {
-  const { account, connectWallet, isConnecting } = useWallet();
+  const { account, connectWallet, isConnecting, isMetaMaskInstalled } = useWallet();
 
   return (
     <div className="min-h-screen">
@@ -72,9 +72,16 @@ const Home = () => {
                 Connect Your MetaMask Wallet
               </h2>
               <div className="flex items-center justify-center lg:justify-start mb-4">
-                <div className={`w-3 h-3 rounded-full mr-2 ${account ? 'bg-green-400' : 'bg-gray-400'}`}></div>
-                <span className={`text-sm font-medium ${account ? 'text-green-600 dark:text-green-400' : 'text-gray-500'}`}>
-                  {account ? 'Wallet Connected' : 'Wallet Not Connected'}
+                <div className={`w-3 h-3 rounded-full mr-2 ${
+                  account ? 'bg-green-400' :
+                  isMetaMaskInstalled ? 'bg-yellow-400' : 'bg-red-400'
+                }`}></div>
+                <span className={`text-sm font-medium ${
+                  account ? 'text-green-600 dark:text-green-400' :
+                  isMetaMaskInstalled ? 'text-yellow-600 dark:text-yellow-400' : 'text-red-600 dark:text-red-400'
+                }`}>
+                  {account ? 'Wallet Connected' :
+                   isMetaMaskInstalled ? 'MetaMask Detected - Click to Connect' : 'MetaMask Not Installed'}
                 </span>
               </div>
               {account && (
@@ -83,27 +90,42 @@ const Home = () => {
                 </p>
               )}
               <p className="text-gray-600 dark:text-gray-300 mb-6">
-                To start trading, connect your MetaMask wallet. If you don't have MetaMask installed,
-                download the Chrome extension for the best experience.
+                {!isMetaMaskInstalled
+                  ? "To start trading, you need to install MetaMask. It's a secure wallet for blockchain applications."
+                  : account
+                    ? "Your wallet is connected! You can now trade cryptocurrencies securely."
+                    : "Connect your MetaMask wallet to start trading. Make sure MetaMask is unlocked and you're on a supported network."
+                }
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
+                {!isMetaMaskInstalled ? (
+                  <a
+                    href="https://chrome.google.com/webstore/detail/metamask/nkbihfbeogaeaoehlefnkodbefgpgknn"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="btn-primary inline-flex items-center"
+                  >
+                    <FaWallet className="mr-2" />
+                    Install MetaMask Extension
+                  </a>
+                ) : (
+                  <button
+                    onClick={connectWallet}
+                    disabled={isConnecting}
+                    className="btn-primary inline-flex items-center disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    <FaWallet className="mr-2" />
+                    {isConnecting ? 'Connecting...' : account ? `${account.slice(0, 6)}...${account.slice(-4)}` : 'Connect Wallet'}
+                  </button>
+                )}
                 <a
-                  href="https://chrome.google.com/webstore/detail/metamask/nkbihfbeogaeaoehlefnkodbefgpgknn"
+                  href="https://metamask.io/"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="btn-primary inline-flex items-center"
+                  className="btn-secondary inline-flex items-center"
                 >
-                  <FaWallet className="mr-2" />
-                  Download MetaMask Extension
+                  Learn About MetaMask
                 </a>
-                <button
-                  onClick={connectWallet}
-                  disabled={isConnecting}
-                  className="btn-secondary inline-flex items-center disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  <FaWallet className="mr-2" />
-                  {isConnecting ? 'Connecting...' : account ? `${account.slice(0, 6)}...${account.slice(-4)}` : 'Connect Wallet'}
-                </button>
               </div>
             </div>
 
@@ -205,14 +227,26 @@ const Home = () => {
             Start with as little as $10 and experience professional-grade trading.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <button
-              onClick={connectWallet}
-              disabled={isConnecting}
-              className="bg-white text-primary font-semibold px-8 py-4 rounded-lg hover:bg-gray-100 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              <FaWallet className="inline mr-2" />
-              {isConnecting ? 'Connecting...' : account ? `${account.slice(0, 6)}...${account.slice(-4)}` : 'Connect Wallet'}
-            </button>
+            {!isMetaMaskInstalled ? (
+              <a
+                href="https://chrome.google.com/webstore/detail/metamask/nkbihfbeogaeaoehlefnkodbefgpgknn"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="bg-white text-primary font-semibold px-8 py-4 rounded-lg hover:bg-gray-100 transition-colors inline-flex items-center"
+              >
+                <FaWallet className="inline mr-2" />
+                Install MetaMask
+              </a>
+            ) : (
+              <button
+                onClick={connectWallet}
+                disabled={isConnecting}
+                className="bg-white text-primary font-semibold px-8 py-4 rounded-lg hover:bg-gray-100 transition-colors disabled:opacity-50 disabled:cursor-not-allowed inline-flex items-center"
+              >
+                <FaWallet className="inline mr-2" />
+                {isConnecting ? 'Connecting...' : account ? `${account.slice(0, 6)}...${account.slice(-4)}` : 'Connect Wallet'}
+              </button>
+            )}
             <button className="border-2 border-white text-white font-semibold px-8 py-4 rounded-lg hover:bg-white/10 transition-colors">
               Learn More
             </button>

@@ -14,8 +14,18 @@ const TokenSwap = () => {
   const [toAmount, setToAmount] = useState('');
   const [slippage, setSlippage] = useState('0.5');
   const [isLoading, setIsLoading] = useState(false);
-  const [exchangeContract, setExchangeContract] = useState(null);
-  const [tokenContracts, setTokenContracts] = useState({});
+  const [currentNetwork, setCurrentNetwork] = useState('demo');
+
+  // Update network status
+  useEffect(() => {
+    const updateNetwork = async () => {
+      const network = await getCurrentNetwork();
+      setCurrentNetwork(network);
+    };
+    if (provider) {
+      updateNetwork();
+    }
+  }, [provider]);
 
   // Initialize contracts when wallet is connected
   useEffect(() => {
@@ -26,28 +36,62 @@ const TokenSwap = () => {
 
   const initializeContracts = async () => {
     try {
+      const currentNetwork = await getCurrentNetwork();
+      const networkConfig = deployments[currentNetwork];
+
+      if (!networkConfig || !networkConfig.exchangeAddress) {
+        console.warn(`No contracts deployed for network: ${currentNetwork}. Using demo mode.`);
+        setExchangeContract(null);
+        setTokenContracts({});
+        return;
+      }
+
       // Initialize exchange contract
-      const exchange = new ethers.Contract(deployments.exchangeAddress, exchangeABI, signer);
+      const exchange = new ethers.Contract(networkConfig.exchangeAddress, exchangeABI, signer);
       setExchangeContract(exchange);
 
       // Initialize token contracts
       const tokens = {};
-      for (const [symbol, address] of Object.entries(deployments.tokens)) {
-        tokens[symbol] = new ethers.Contract(address, tokenABI, signer);
+      for (const [symbol, address] of Object.entries(networkConfig.tokens)) {
+        if (address) {
+          tokens[symbol] = new ethers.Contract(address, tokenABI, signer);
+        }
       }
       setTokenContracts(tokens);
     } catch (error) {
       console.error('Error initializing contracts:', error);
+      setExchangeContract(null);
+      setTokenContracts({});
+    }
+  };
+
+  const getCurrentNetwork = async () => {
+    if (!provider) return 'demo';
+    try {
+      const network = await provider.getNetwork();
+      const chainId = network.chainId;
+
+      if (chainId === 31337n) return 'localhost';
+      if (chainId === 11155111n) return 'sepolia';
+      return 'demo'; // For mainnet or unknown networks
+    } catch (error) {
+      console.error('Error getting network:', error);
+      return 'demo';
     }
   };
 
     // Professional token list with contract addresses
-  const tokens = [
-    { symbol: 'ETH', name: 'Ethereum', balance: '2.45', price: '$1,850.00', icon: 'Ξ', address: '0x0000000000000000000000000000000000000000' },
-    { symbol: 'USDC', name: 'USD Coin', balance: '1,250.00', price: '$1.00', icon: '💲', address: deployments.tokens?.USDC || '' },
-    { symbol: 'DAI', name: 'Dai', balance: '500.00', price: '$1.00', icon: '🪙', address: deployments.tokens?.DAI || '' },
-    { symbol: 'WBTC', name: 'Wrapped Bitcoin', balance: '0.025', price: '$43,250.00', icon: '₿', address: deployments.tokens?.WBTC || '' },
-  ];
+  const getTokenList = () => {
+    const currentNetwork = deployments[window.location.hostname === 'localhost' ? 'localhost' : 'demo'];
+    return [
+      { symbol: 'ETH', name: 'Ethereum', balance: '2.45', price: '$1,850.00', icon: 'Ξ', address: '0x0000000000000000000000000000000000000000' },
+      { symbol: 'USDC', name: 'USD Coin', balance: '1,250.00', price: '$1.00', icon: '💲', address: currentNetwork?.tokens?.USDC || '' },
+      { symbol: 'DAI', name: 'Dai', balance: '500.00', price: '$1.00', icon: '🪙', address: currentNetwork?.tokens?.DAI || '' },
+      { symbol: 'WBTC', name: 'Wrapped Bitcoin', balance: '0.025', price: '$43,250.00', icon: '₿', address: currentNetwork?.tokens?.WBTC || '' },
+    ];
+  };
+
+  const tokens = getTokenList();
 
   const selectedFromToken = tokens.find(t => t.symbol === fromToken);
   const selectedToToken = tokens.find(t => t.symbol === toToken);
@@ -56,12 +100,18 @@ const TokenSwap = () => {
   const exchangeRate = fromToken === 'ETH' && toToken === 'USDC' ? '1,850.00' : '1.00';
 
   const handleSwap = async () => {
-    if (!account || !exchangeContract) {
+    if (!account) {
       alert('Please connect your wallet first!');
       return;
     }
     if (!fromAmount) {
       alert('Please enter an amount to swap');
+      return;
+    }
+
+    // Check if contracts are available
+    if (!exchangeContract) {
+      alert('Smart contracts not available on this network. Please switch to localhost network for testing, or use demo mode.');
       return;
     }
 
@@ -97,7 +147,7 @@ const TokenSwap = () => {
         }
 
         // Approve spending
-        const approveTx = await tokenContract.approve(deployments.exchangeAddress, amountIn);
+        const approveTx = await tokenContract.approve(deployments.localhost.exchangeAddress, amountIn);
         await approveTx.wait();
 
         // Perform swap
@@ -139,9 +189,19 @@ const TokenSwap = () => {
     <div className="trading-card">
       <div className="flex items-center justify-between mb-6">
         <h2 className="text-xl font-semibold text-gray-900 dark:text-white">Swap Tokens</h2>
-        <div className="flex items-center text-sm text-gray-500 dark:text-gray-400">
-          <FaClock className="mr-1" />
-          ~30s
+        <div className="flex items-center space-x-4">
+          <div className="flex items-center text-sm text-gray-500 dark:text-gray-400">
+            <div className={`w-2 h-2 rounded-full mr-2 ${
+              currentNetwork === 'localhost' ? 'bg-green-400' :
+              currentNetwork === 'sepolia' ? 'bg-blue-400' : 'bg-yellow-400'
+            }`}></div>
+            {currentNetwork === 'localhost' ? 'Localhost' :
+             currentNetwork === 'sepolia' ? 'Sepolia' : 'Demo Mode'}
+          </div>
+          <div className="flex items-center text-sm text-gray-500 dark:text-gray-400">
+            <FaClock className="mr-1" />
+            ~30s
+          </div>
         </div>
       </div>
 
@@ -287,6 +347,8 @@ const TokenSwap = () => {
             <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
             Processing...
           </div>
+        ) : !exchangeContract ? (
+          'Demo Mode - Connect to Localhost'
         ) : account ? (
           'Swap Tokens'
         ) : (

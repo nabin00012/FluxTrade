@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { FaExchangeAlt, FaChevronDown, FaInfoCircle, FaGasPump, FaClock } from 'react-icons/fa';
+import { FaExchangeAlt, FaChevronDown, FaChevronLeft, FaInfoCircle, FaGasPump, FaClock } from 'react-icons/fa';
 import { useWallet } from '../context/WalletContext';
 import { ethers } from 'ethers';
 import deployments from '../contracts/deployments.json';
@@ -341,14 +341,14 @@ const TokenSwap = () => {
             >
               <span className="text-lg">{selectedFromToken?.icon}</span>
               <span className="font-medium">{fromToken}</span>
-              <FaChevronDown className="text-sm text-gray-500" />
+              <FaChevronLeft className="text-sm text-gray-500" />
             </div>
           </div>
         </div>
 
         {/* From Token Dropdown */}
         {showFromDropdown && (
-          <div className="token-selector absolute top-full left-0 right-0 mt-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-lg shadow-lg z-50 max-h-48 overflow-y-auto">
+          <div className="token-selector absolute top-0 right-full mr-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-lg shadow-lg z-50 w-64 max-h-48 overflow-y-auto">
             {tokens.map((token) => (
               <div
                 key={token.symbol}
@@ -405,13 +405,13 @@ const TokenSwap = () => {
                onClick={() => setShowToDropdown(!showToDropdown)}>
             <span className="text-lg">{selectedToToken?.icon}</span>
             <span className="font-medium">{toToken}</span>
-            <FaChevronDown className="text-sm text-gray-500" />
+            <FaChevronLeft className="text-sm text-gray-500" />
           </div>
         </div>
 
         {/* To Token Dropdown */}
         {showToDropdown && (
-          <div className="token-selector absolute top-full left-0 right-0 mt-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-lg shadow-lg z-50 max-h-48 overflow-y-auto">
+          <div className="token-selector absolute top-0 right-full mr-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-lg shadow-lg z-50 w-64 max-h-48 overflow-y-auto">
             {tokens.map((token) => (
               <div
                 key={token.symbol}

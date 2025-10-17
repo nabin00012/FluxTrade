@@ -43,11 +43,15 @@ const TradeDashboard = () => {
       // Fetch user trades from backend
       try {
         const response = await axios.get(`${import.meta.env.VITE_API_URL}/trades/user/${account}`);
-        if (response.data.success) {
-          setUserTrades(response.data.data);
+        if (response.data && response.data.success) {
+          setUserTrades(response.data.data || []);
+        } else if (response.data && response.data.data) {
+          setUserTrades(response.data.data || []);
+        } else {
+          setUserTrades([]);
         }
       } catch (apiError) {
-        console.log('No trades found for user, using empty array');
+        console.log('Error fetching user trades, using empty array', apiError?.message || apiError);
         setUserTrades([]);
       }
 
@@ -158,6 +162,26 @@ const TradeDashboard = () => {
         totalTrades: 42,
       });
     }
+  }, [account]);
+
+  // Listen for trade events (demo mode or real) and refresh
+  useEffect(() => {
+    const onTrade = (e) => {
+      // new trade completed, refresh dashboard
+      fetchDashboardData();
+    };
+    window.addEventListener('fluxtrade:trade', onTrade);
+
+    // Poll backend every 15s when account connected to get latest trades
+    let interval = null;
+    if (account) {
+      interval = setInterval(fetchDashboardData, 15 * 1000);
+    }
+
+    return () => {
+      window.removeEventListener('fluxtrade:trade', onTrade);
+      if (interval) clearInterval(interval);
+    };
   }, [account]);
 
   if (!account) {

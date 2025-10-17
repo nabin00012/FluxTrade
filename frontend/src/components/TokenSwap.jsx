@@ -21,6 +21,10 @@ const TokenSwap = () => {
   const [tokenPrices, setTokenPrices] = useState({});
   const [showFromDropdown, setShowFromDropdown] = useState(false);
   const [showToDropdown, setShowToDropdown] = useState(false);
+  const [fromPlacement, setFromPlacement] = useState('right'); // 'left' | 'right'
+  const [toPlacement, setToPlacement] = useState('right');
+  const fromSelectorRef = useRef(null);
+  const toSelectorRef = useRef(null);
 
   // Update network status
   useEffect(() => {
@@ -176,6 +180,10 @@ const TokenSwap = () => {
           console.log('Could not save demo trade to backend, continuing...');
         }
 
+        // Emit a custom event so other components (dashboard) can react
+        const event = new CustomEvent('fluxtrade:trade', { detail: mockTrade });
+        window.dispatchEvent(event);
+
         alert(`🎉 Demo Swap Successful!\n\nSwapped ${fromAmount} ${fromToken} for ${toAmount} ${toToken}\n\nThis was a demo transaction. Connect to localhost network or deploy contracts to testnet for real swaps.`);
 
         // Reset form
@@ -264,6 +272,21 @@ const TokenSwap = () => {
     }
   };
 
+  // Compute placement (left or right) based on available viewport space
+  const computePlacement = (buttonRef, setPlacement) => {
+    if (!buttonRef?.current) return setPlacement('right');
+    const rect = buttonRef.current.getBoundingClientRect();
+    const dropdownWidth = 256; // matches w-64
+    const spaceRight = window.innerWidth - rect.right;
+    const spaceLeft = rect.left;
+    // prefer opening toward larger space, but avoid overlapping center
+    if (spaceRight < dropdownWidth && spaceLeft > dropdownWidth) {
+      setPlacement('left');
+    } else {
+      setPlacement('right');
+    }
+  };
+
   const setMaxAmount = () => {
     if (selectedFromToken) {
       setFromAmount(selectedFromToken.balance);
@@ -336,8 +359,12 @@ const TokenSwap = () => {
               MAX
             </button>
             <div 
+              ref={fromSelectorRef}
               className="flex items-center space-x-2 bg-gray-100 dark:bg-gray-700 px-3 py-2 rounded-lg cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
-              onClick={() => setShowFromDropdown(!showFromDropdown)}
+              onClick={() => {
+                computePlacement(fromSelectorRef, setFromPlacement);
+                setShowFromDropdown(!showFromDropdown);
+              }}
             >
               <span className="text-lg">{selectedFromToken?.icon}</span>
               <span className="font-medium">{fromToken}</span>
@@ -348,7 +375,12 @@ const TokenSwap = () => {
 
         {/* From Token Dropdown */}
         {showFromDropdown && (
-          <div className="token-selector absolute md:top-1/2 md:-translate-y-1/2 md:right-full md:mr-2 md:w-64 md:max-h-48 md:overflow-y-auto top-full left-0 right-0 mt-1 w-full max-h-48 overflow-y-auto bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-lg shadow-lg z-50">
+          <div
+            className={`token-selector absolute top-full left-0 right-0 mt-1 w-full max-h-48 overflow-y-auto bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-lg shadow-lg z-50 md:w-64 md:max-h-48 md:overflow-y-auto ${
+              fromPlacement === 'right' ? 'md:right-full md:mr-2 md:top-1/2 md:-translate-y-1/2 md:left-auto' : 'md:left-full md:ml-2 md:top-1/2 md:-translate-y-1/2 md:right-auto'
+            }`}
+            style={{ minWidth: fromPlacement === 'right' ? undefined : undefined }}
+          >
             {tokens.map((token) => (
               <div
                 key={token.symbol}
@@ -359,11 +391,11 @@ const TokenSwap = () => {
               >
                 <span className="text-lg">{token.icon}</span>
                 <div>
-                  <div className="font-medium">{token.symbol}</div>
+                  <div className="font-medium text-gray-900 dark:text-white">{token.symbol}</div>
                   <div className="text-sm text-gray-500 dark:text-gray-400">{token.name}</div>
                 </div>
                 <div className="ml-auto text-right">
-                  <div className="font-medium">${token.price}</div>
+                  <div className="font-medium text-gray-900 dark:text-white">${token.price}</div>
                   <div className="text-sm text-gray-500 dark:text-gray-400">Balance: {token.balance}</div>
                 </div>
               </div>
@@ -401,8 +433,14 @@ const TokenSwap = () => {
             placeholder="0.00"
             className="input-primary w-full pr-20 text-lg font-semibold"
           />
-          <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center space-x-2 bg-gray-100 dark:bg-gray-700 px-3 py-2 rounded-lg cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
-               onClick={() => setShowToDropdown(!showToDropdown)}>
+          <div
+            ref={toSelectorRef}
+            className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center space-x-2 bg-gray-100 dark:bg-gray-700 px-3 py-2 rounded-lg cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
+            onClick={() => {
+              computePlacement(toSelectorRef, setToPlacement);
+              setShowToDropdown(!showToDropdown);
+            }}
+          >
             <span className="text-lg">{selectedToToken?.icon}</span>
             <span className="font-medium">{toToken}</span>
             <FaChevronLeft className="text-sm text-gray-500" />
@@ -411,7 +449,11 @@ const TokenSwap = () => {
 
         {/* To Token Dropdown */}
         {showToDropdown && (
-          <div className="token-selector absolute md:top-1/2 md:-translate-y-1/2 md:right-full md:mr-2 md:w-64 md:max-h-48 md:overflow-y-auto top-full left-0 right-0 mt-1 w-full max-h-48 overflow-y-auto bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-lg shadow-lg z-50">
+          <div
+            className={`token-selector absolute top-full left-0 right-0 mt-1 w-full max-h-48 overflow-y-auto bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-lg shadow-lg z-50 md:w-64 md:max-h-48 md:overflow-y-auto ${
+              toPlacement === 'right' ? 'md:right-full md:mr-2 md:top-1/2 md:-translate-y-1/2 md:left-auto' : 'md:left-full md:ml-2 md:top-1/2 md:-translate-y-1/2 md:right-auto'
+            }`}
+          >
             {tokens.map((token) => (
               <div
                 key={token.symbol}
@@ -422,11 +464,11 @@ const TokenSwap = () => {
               >
                 <span className="text-lg">{token.icon}</span>
                 <div>
-                  <div className="font-medium">{token.symbol}</div>
+                  <div className="font-medium text-gray-900 dark:text-white">{token.symbol}</div>
                   <div className="text-sm text-gray-500 dark:text-gray-400">{token.name}</div>
                 </div>
                 <div className="ml-auto text-right">
-                  <div className="font-medium">${token.price}</div>
+                  <div className="font-medium text-gray-900 dark:text-white">${token.price}</div>
                   <div className="text-sm text-gray-500 dark:text-gray-400">Balance: {token.balance}</div>
                 </div>
               </div>

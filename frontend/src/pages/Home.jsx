@@ -13,10 +13,7 @@ const Home = () => {
         <div className="absolute inset-0 bg-grid-pattern opacity-5"></div>
         <div className="relative max-w-7xl mx-auto mobile-padding py-16 lg:py-24">
           <div className="text-center mb-16">
-            <div className="inline-flex items-center px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-medium mb-6">
-              <FaRocket className="mr-2" />
-              Trusted by 10,000+ traders worldwide
-            </div>
+            {/* removed promotional badge for a cleaner UI */}
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 dark:text-white mb-6 leading-tight">
               Professional{' '}
               <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">

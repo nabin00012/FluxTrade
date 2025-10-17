@@ -15,6 +15,8 @@ const TokenSwap = () => {
   const [slippage, setSlippage] = useState('0.5');
   const [isLoading, setIsLoading] = useState(false);
   const [currentNetwork, setCurrentNetwork] = useState('demo');
+  const [exchangeContract, setExchangeContract] = useState(null);
+  const [tokenContracts, setTokenContracts] = useState({});
 
   // Update network status
   useEffect(() => {

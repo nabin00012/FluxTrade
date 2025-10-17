@@ -348,7 +348,7 @@ const TokenSwap = () => {
 
         {/* From Token Dropdown */}
         {showFromDropdown && (
-          <div className="token-selector absolute top-0 right-full mr-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-lg shadow-lg z-50 w-64 max-h-48 overflow-y-auto">
+          <div className="token-selector absolute md:top-1/2 md:-translate-y-1/2 md:right-full md:mr-2 md:w-64 md:max-h-48 md:overflow-y-auto top-full left-0 right-0 mt-1 w-full max-h-48 overflow-y-auto bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-lg shadow-lg z-50">
             {tokens.map((token) => (
               <div
                 key={token.symbol}
@@ -411,7 +411,7 @@ const TokenSwap = () => {
 
         {/* To Token Dropdown */}
         {showToDropdown && (
-          <div className="token-selector absolute top-0 right-full mr-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-lg shadow-lg z-50 w-64 max-h-48 overflow-y-auto">
+          <div className="token-selector absolute md:top-1/2 md:-translate-y-1/2 md:right-full md:mr-2 md:w-64 md:max-h-48 md:overflow-y-auto top-full left-0 right-0 mt-1 w-full max-h-48 overflow-y-auto bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-lg shadow-lg z-50">
             {tokens.map((token) => (
               <div
                 key={token.symbol}

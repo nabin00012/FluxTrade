@@ -19,6 +19,8 @@ const TokenSwap = () => {
   const [exchangeContract, setExchangeContract] = useState(null);
   const [tokenContracts, setTokenContracts] = useState({});
   const [tokenPrices, setTokenPrices] = useState({});
+  const [showFromDropdown, setShowFromDropdown] = useState(false);
+  const [showToDropdown, setShowToDropdown] = useState(false);
 
   // Update network status
   useEffect(() => {
@@ -42,6 +44,19 @@ const TokenSwap = () => {
     // Refresh prices every 5 minutes
     const interval = setInterval(fetchPrices, 5 * 60 * 1000);
     return () => clearInterval(interval);
+  }, []);
+
+  // Close dropdowns when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (!event.target.closest('.token-selector')) {
+        setShowFromDropdown(false);
+        setShowToDropdown(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
   // Initialize contracts when wallet is connected
@@ -232,6 +247,23 @@ const TokenSwap = () => {
     setToAmount(fromAmount);
   };
 
+  const selectFromToken = (tokenSymbol) => {
+    if (tokenSymbol !== toToken) {
+      setFromToken(tokenSymbol);
+      setShowFromDropdown(false);
+      setFromAmount(''); // Reset amount when changing tokens
+      setToAmount(''); // Reset output amount
+    }
+  };
+
+  const selectToToken = (tokenSymbol) => {
+    if (tokenSymbol !== fromToken) {
+      setToToken(tokenSymbol);
+      setShowToDropdown(false);
+      setToAmount(''); // Reset output amount
+    }
+  };
+
   const setMaxAmount = () => {
     if (selectedFromToken) {
       setFromAmount(selectedFromToken.balance);
@@ -303,13 +335,41 @@ const TokenSwap = () => {
             >
               MAX
             </button>
-            <div className="flex items-center space-x-2 bg-gray-100 dark:bg-gray-700 px-3 py-2 rounded-lg cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors">
+            <div 
+              className="flex items-center space-x-2 bg-gray-100 dark:bg-gray-700 px-3 py-2 rounded-lg cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
+              onClick={() => setShowFromDropdown(!showFromDropdown)}
+            >
               <span className="text-lg">{selectedFromToken?.icon}</span>
               <span className="font-medium">{fromToken}</span>
               <FaChevronDown className="text-sm text-gray-500" />
             </div>
           </div>
         </div>
+
+        {/* From Token Dropdown */}
+        {showFromDropdown && (
+          <div className="token-selector absolute top-full left-0 right-0 mt-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-lg shadow-lg z-50 max-h-48 overflow-y-auto">
+            {tokens.map((token) => (
+              <div
+                key={token.symbol}
+                className={`flex items-center space-x-3 px-4 py-3 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors ${
+                  token.symbol === fromToken ? 'bg-primary/10 text-primary' : ''
+                } ${token.symbol === toToken ? 'opacity-50 cursor-not-allowed' : ''}`}
+                onClick={() => token.symbol !== toToken && selectFromToken(token.symbol)}
+              >
+                <span className="text-lg">{token.icon}</span>
+                <div>
+                  <div className="font-medium">{token.symbol}</div>
+                  <div className="text-sm text-gray-500 dark:text-gray-400">{token.name}</div>
+                </div>
+                <div className="ml-auto text-right">
+                  <div className="font-medium">${token.price}</div>
+                  <div className="text-sm text-gray-500 dark:text-gray-400">Balance: {token.balance}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
         <div className="text-sm text-gray-500 dark:text-gray-400 mt-1">
           ≈ ${fromAmount ? (parseFloat(fromAmount) * parseFloat(selectedFromToken?.price || 0)).toLocaleString() : '0.00'}
         </div>
@@ -341,12 +401,38 @@ const TokenSwap = () => {
             placeholder="0.00"
             className="input-primary w-full pr-20 text-lg font-semibold"
           />
-          <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center space-x-2 bg-gray-100 dark:bg-gray-700 px-3 py-2 rounded-lg">
+          <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center space-x-2 bg-gray-100 dark:bg-gray-700 px-3 py-2 rounded-lg cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
+               onClick={() => setShowToDropdown(!showToDropdown)}>
             <span className="text-lg">{selectedToToken?.icon}</span>
             <span className="font-medium">{toToken}</span>
             <FaChevronDown className="text-sm text-gray-500" />
           </div>
         </div>
+
+        {/* To Token Dropdown */}
+        {showToDropdown && (
+          <div className="token-selector absolute top-full left-0 right-0 mt-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-lg shadow-lg z-50 max-h-48 overflow-y-auto">
+            {tokens.map((token) => (
+              <div
+                key={token.symbol}
+                className={`flex items-center space-x-3 px-4 py-3 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors ${
+                  token.symbol === toToken ? 'bg-primary/10 text-primary' : ''
+                } ${token.symbol === fromToken ? 'opacity-50 cursor-not-allowed' : ''}`}
+                onClick={() => token.symbol !== fromToken && selectToToken(token.symbol)}
+              >
+                <span className="text-lg">{token.icon}</span>
+                <div>
+                  <div className="font-medium">{token.symbol}</div>
+                  <div className="text-sm text-gray-500 dark:text-gray-400">{token.name}</div>
+                </div>
+                <div className="ml-auto text-right">
+                  <div className="font-medium">${token.price}</div>
+                  <div className="text-sm text-gray-500 dark:text-gray-400">Balance: {token.balance}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
         <div className="text-sm text-gray-500 dark:text-gray-400 mt-1">
           ≈ ${toAmount ? (parseFloat(toAmount) * parseFloat(selectedToToken?.price || 0)).toLocaleString() : '0.00'}
         </div>

@@ -1,5 +1,6 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { FaExchangeAlt, FaChevronDown, FaChevronLeft, FaInfoCircle, FaGasPump, FaClock } from 'react-icons/fa';
+import axios from 'axios';
 import { useWallet } from '../context/WalletContext';
 import { ethers } from 'ethers';
 import deployments from '../contracts/deployments.json';

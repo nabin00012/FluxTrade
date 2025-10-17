@@ -30,7 +30,7 @@
 In the Render dashboard, add these environment variables:
 
 ```
-MONGODB_URI=mongodb+srv://fluxtradeuser:2UBk0OSyObkiC5YX@cluster0.k2atslp.mongodb.net/fluxtradedb?retryWrites=true&w=majority&appName=Cluster0
+MONGODB_URI=
 
 NODE_ENV=production
 

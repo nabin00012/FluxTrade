@@ -1,0 +1,26 @@
+{
+  "name": "fluxtrade",
+  "version": "1.0.0",
+  "description": "FluxTrade - Decentralized Crypto Trading Platform",
+  "private": true,
+  "scripts": {
+    "install:all": "cd frontend && npm install && cd ../backend && npm install && cd ../contracts && npm install",
+    "dev:frontend": "cd frontend && npm run dev",
+    "dev:backend": "cd backend && npm run dev",
+    "dev:contracts": "cd contracts && npm run node",
+    "deploy:contracts": "cd contracts && npm run deploy:localhost",
+    "test:contracts": "cd contracts && npm test",
+    "compile:contracts": "cd contracts && npm run compile",
+    "build:frontend": "cd frontend && npm run build"
+  },
+  "keywords": [
+    "defi",
+    "trading",
+    "blockchain",
+    "ethereum",
+    "dex",
+    "web3"
+  ],
+  "author": "",
+  "license": "MIT"
+}

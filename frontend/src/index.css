@@ -1,0 +1,90 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900 min-h-screen text-white;
+  }
+}
+
+@layer components {
+  /* Glass card effect */
+  .glass-card {
+    @apply bg-white/10 backdrop-blur-md rounded-xl border border-white/20;
+  }
+  
+  /* Neon button */
+  .neon-button {
+    @apply bg-gradient-to-r from-primary to-accent px-6 py-3 rounded-lg font-semibold
+           transition-all duration-300 hover:shadow-neon-strong hover:scale-105
+           active:scale-95;
+  }
+  
+  /* Glass input */
+  .glass-input {
+    @apply bg-white/5 backdrop-blur-sm border border-white/20 rounded-lg px-4 py-3
+           text-white placeholder-gray-400 focus:outline-none focus:border-primary
+           transition-colors duration-300;
+  }
+  
+  /* Gradient text */
+  .gradient-text {
+    @apply bg-gradient-to-r from-neon-blue via-neon-purple to-neon-pink
+           bg-clip-text text-transparent;
+  }
+  
+  /* Animated gradient border */
+  .gradient-border {
+    @apply relative overflow-hidden rounded-xl;
+  }
+  
+  .gradient-border::before {
+    content: '';
+    @apply absolute inset-0 bg-gradient-to-r from-primary via-accent to-primary
+           rounded-xl opacity-75 blur-sm;
+    animation: rotate 3s linear infinite;
+  }
+  
+  .gradient-border > * {
+    @apply relative z-10;
+  }
+}
+
+@layer utilities {
+  /* Custom scrollbar */
+  .scrollbar-custom::-webkit-scrollbar {
+    width: 8px;
+  }
+  
+  .scrollbar-custom::-webkit-scrollbar-track {
+    @apply bg-gray-800/50 rounded-full;
+  }
+  
+  .scrollbar-custom::-webkit-scrollbar-thumb {
+    @apply bg-primary/50 rounded-full hover:bg-primary/70;
+  }
+}
+
+/* Animations */
+@keyframes rotate {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes pulse-glow {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(99, 102, 241, 0.5);
+  }
+  50% {
+    box-shadow: 0 0 40px rgba(99, 102, 241, 0.8);
+  }
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 2s ease-in-out infinite;
+}
